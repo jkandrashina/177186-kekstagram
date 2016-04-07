@@ -104,7 +104,56 @@
 
       // Установка начальной точки системы координат в центр холста.
       this._ctx.translate(this._container.width / 2, this._container.height / 2);
-
+	  
+	  //Начало создания маски.
+	  //Маска представляет собой слой, закрывающий части изображения,
+	  //не попадающие в фокус кадрирования
+	  
+	  //Координаты x и y внешнего и внутреннего края маски
+      var overlayOuterRectX = -(this._container.width / 2);
+      var overlayOuterRectY = -(this._container.height / 2);
+      var overlayInnerRectX = -this._resizeConstraint.side / 2 - this._ctx.lineWidth;
+      var overlayInnerRectY = -this._resizeConstraint.side / 2 - this._ctx.lineWidth;
+	  
+	  this._ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+	  //Внешний прямоугольник маски
+	  this._ctx.fillRect(
+	      overlayOuterRectX,
+          overlayOuterRectY,
+		  this._container.width,
+		  this._container.height);
+	  
+	  //Внутренний прямоугольник маски
+	  this._ctx.beginPath();
+      this._ctx.moveTo(overlayInnerRectX, overlayInnerRectY);
+      this._ctx.lineTo(
+          this._resizeConstraint.side / 2 - this._ctx.lineWidth / 2,
+          overlayInnerRectY);
+      this._ctx.lineTo(
+          this._resizeConstraint.side / 2 - this._ctx.lineWidth / 2,
+          this._resizeConstraint.side / 2 - this._ctx.lineWidth / 2);
+      this._ctx.lineTo(
+          overlayInnerRectX,
+          this._resizeConstraint.side / 2 - this._ctx.lineWidth / 2);
+      this._ctx.lineTo(overlayInnerRectX, overlayInnerRectY);
+      this._ctx.closePath();
+	  
+	  this._ctx.fill();
+	  
+	  //Вывод текста с информацией о размере изображения
+	  this._ctx.fillStyle = '#fff';
+      this._ctx.textAlign = 'center';
+      this._ctx.Baseline = 'middle';
+      this._ctx.fillText(
+          (this._image.naturalWidth + 'x' + this._image.naturalHeight),
+          0,
+          -this._resizeConstraint.side / 2 - this._ctx.lineWidth * 2);
+	  
+	  //Применяем маску
+	  this._ctx.clip();
+	  //Конец маски
+	  
+      //Определение координат отрисовки изображения
       var displX = -(this._resizeConstraint.x + this._resizeConstraint.side / 2);
       var displY = -(this._resizeConstraint.y + this._resizeConstraint.side / 2);
       // Отрисовка изображения на холсте. Параметры задают изображение, которое
