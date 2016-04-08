@@ -133,7 +133,7 @@
 
       this._ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
 
-	  //Внешний прямоугольник оверелея
+      //Внешний прямоугольник оверелея
       this._ctx.beginPath();
       this._ctx.moveTo(overlayOuterRectX, overlayOuterRectY);
       this._ctx.lineTo(this._container.width, overlayOuterRectY);
@@ -154,8 +154,8 @@
           this._resizeConstraint.side / 2 - this._ctx.lineWidth / 2);
       this._ctx.lineTo(overlayInnerRectX, overlayInnerRectY);
       this._ctx.closePath();
-      
-	  this._ctx.fill('evenodd');
+
+      this._ctx.fill('evenodd');
       //Конец оверлея
 
       //Вывод текста с информацией о размере изображения
