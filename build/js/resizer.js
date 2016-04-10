@@ -105,6 +105,7 @@
       // Установка начальной точки системы координат в центр холста.
       this._ctx.translate(this._container.width / 2, this._container.height / 2);
 
+      //Определение координат отрисовки изображения
       var displX = -(this._resizeConstraint.x + this._resizeConstraint.side / 2);
       var displY = -(this._resizeConstraint.y + this._resizeConstraint.side / 2);
       // Отрисовка изображения на холсте. Параметры задают изображение, которое
@@ -119,6 +120,52 @@
           (-this._resizeConstraint.side / 2) - this._ctx.lineWidth / 2,
           this._resizeConstraint.side - this._ctx.lineWidth / 2,
           this._resizeConstraint.side - this._ctx.lineWidth / 2);
+
+      //Начало создания оверлея.
+      //Оверлей представляет собой полупрозрачный слой, закрывающий части изображения,
+      //не попадающие в фокус кадрирования
+
+      //Координаты x и y внешнего и внутреннего края оверлея
+      var overlayOuterRectX = -(this._container.width / 2);
+      var overlayOuterRectY = -(this._container.height / 2);
+      var overlayInnerRectX = -this._resizeConstraint.side / 2 - this._ctx.lineWidth;
+      var overlayInnerRectY = -this._resizeConstraint.side / 2 - this._ctx.lineWidth;
+
+      this._ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+
+      //Внешний прямоугольник оверелея
+      this._ctx.beginPath();
+      this._ctx.moveTo(overlayOuterRectX, overlayOuterRectY);
+      this._ctx.lineTo(this._container.width, overlayOuterRectY);
+      this._ctx.lineTo(this._container.width, this._container.height);
+      this._ctx.lineTo(overlayOuterRectX, this._container.height);
+      this._ctx.lineTo(overlayOuterRectX, overlayOuterRectY);
+
+      //Внутренний прямоугольник оверлея
+      this._ctx.moveTo(overlayInnerRectX, overlayInnerRectY);
+      this._ctx.lineTo(
+          this._resizeConstraint.side / 2 - this._ctx.lineWidth / 2,
+          overlayInnerRectY);
+      this._ctx.lineTo(
+          this._resizeConstraint.side / 2 - this._ctx.lineWidth / 2,
+          this._resizeConstraint.side / 2 - this._ctx.lineWidth / 2);
+      this._ctx.lineTo(
+          overlayInnerRectX,
+          this._resizeConstraint.side / 2 - this._ctx.lineWidth / 2);
+      this._ctx.lineTo(overlayInnerRectX, overlayInnerRectY);
+      this._ctx.closePath();
+
+      this._ctx.fill('evenodd');
+      //Конец оверлея
+
+      //Вывод текста с информацией о размере изображения
+      this._ctx.fillStyle = '#fff';
+      this._ctx.textAlign = 'center';
+      this._ctx.Baseline = 'middle';
+      this._ctx.fillText(
+          (this._image.naturalWidth + 'x' + this._image.naturalHeight),
+          0,
+          (-this._resizeConstraint.side / 2 - this._ctx.lineWidth * 2));
 
       // Восстановление состояния канваса, которое было до вызова ctx.save
       // и последующего изменения системы координат. Нужно для того, чтобы
