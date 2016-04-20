@@ -72,7 +72,30 @@
    * @return {boolean}
    */
   function resizeFormIsValid() {
-    return true;
+    //Поля формы кадрирования: слева, справа и сторона
+    var resizeFormX = resizeForm['resize-x'].value || 0;
+    var resizeFormY = resizeForm['resize-y'].value || 0;;
+    var resizeFormSize = resizeForm['resize-size'].value || 1;;
+
+    //Параметры максимальной ширины и высоты, которые может принимать
+    //кадрируемое изображение
+    var paramWidth = parseInt(resizeFormX, 10) + parseInt(resizeFormSize, 10);
+    var paramHeight = parseInt(resizeFormY, 10) + parseInt(resizeFormSize, 10);
+
+    //Кнопка сабмита формы кадрирования
+    var resizeFormSubmit = resizeForm['resize-fwd'];
+
+    if (paramWidth > currentResizer._image.naturalWidth ||
+        paramHeight > currentResizer._image.naturalHeight ||
+        resizeFormX < 0 ||
+        resizeFormY < 0 ||
+        resizeFormSize <= 0) {
+        resizeFormSubmit.disabled = true;
+        return false;
+    } else {
+      resizeFormSubmit.disabled = false;
+      return true;
+    }
   }
 
   /**
@@ -86,6 +109,11 @@
    * @type {HTMLFormElement}
    */
   var resizeForm = document.forms['upload-resize'];
+
+  //Вызов функции валидации формы при каждом изменении значений полей формы
+  resizeForm['resize-x'].oninput = resizeFormIsValid;
+  resizeForm['resize-y'].oninput = resizeFormIsValid;
+  resizeForm['resize-size'].oninput = resizeFormIsValid;
 
   /**
    * Форма добавления фильтра.
