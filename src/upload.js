@@ -41,6 +41,25 @@
    */
   var currentResizer;
 
+  //Переменная для хранения cookies
+  var browserCookies = require('browser-cookies');
+
+  //Функция для расчета количества дней, прошедших
+  //с последнего дня рождения до текущего дня
+  function countDaysToExpire() {
+    var today = new Date();
+    var birthday = new Date();
+    birthday.setMonth(5);
+    birthday.setDate(15);
+
+    if (today < birthday) {
+      birthday.setFullYear(birthday.getFullYear() - 1);
+    }
+    return today - birthday;
+  }
+  //Переменная, в которую записывается дата истечения срока хранения куки
+  var expireDate = new Date(countDaysToExpire() + Date.now());
+
   /**
    * Удаляет текущий объект {@link Resizer}, чтобы создать новый с другим
    * изображением.
@@ -74,8 +93,8 @@
   function resizeFormIsValid() {
     //Поля формы кадрирования: слева, справа и сторона
     var resizeFormX = resizeForm['resize-x'].value || 0;
-    var resizeFormY = resizeForm['resize-y'].value || 0;;
-    var resizeFormSize = resizeForm['resize-size'].value || 1;;
+    var resizeFormY = resizeForm['resize-y'].value || 0;
+    var resizeFormSize = resizeForm['resize-size'].value || 1;
 
     //Параметры максимальной ширины и высоты, которые может принимать
     //кадрируемое изображение
@@ -90,8 +109,8 @@
         resizeFormX < 0 ||
         resizeFormY < 0 ||
         resizeFormSize <= 0) {
-        resizeFormSubmit.disabled = true;
-        return false;
+      resizeFormSubmit.disabled = true;
+      return false;
     } else {
       resizeFormSubmit.disabled = false;
       return true;
@@ -125,6 +144,9 @@
    * @type {HTMLImageElement}
    */
   var filterImage = filterForm.querySelector('.filter-image-preview');
+
+  //Переменная для хранения значения value отмеченного фильтра
+  var selectedFilter = browserCookies.get('checkedFilter') || 'none';
 
   /**
    * @type {HTMLElement}
@@ -222,6 +244,11 @@
   resizeForm.onsubmit = function(evt) {
     evt.preventDefault();
 
+    //При сабмите формы последнему выбранному фильтру добавляется атрибут checked
+    //к загруженному изображению добавляется класс с именем выбранного фильтра
+    document.querySelector('input[value="' + selectedFilter + '"]').checked = true;
+    filterImage.classList.add('filter-' + selectedFilter);
+
     if (resizeFormIsValid()) {
       filterImage.src = currentResizer.exportImage().src;
 
@@ -249,6 +276,10 @@
   filterForm.onsubmit = function(evt) {
     evt.preventDefault();
 
+    //Запись куки
+    var checkedFilter = document.querySelector('input[name="upload-filter"]:checked');
+    browserCookies.set('checkedFilter', checkedFilter.value, expireDate);
+
     cleanupResizer();
     updateBackground();
 
@@ -272,7 +303,7 @@
       };
     }
 
-    var selectedFilter = [].filter.call(filterForm['upload-filter'], function(item) {
+    selectedFilter = [].filter.call(filterForm['upload-filter'], function(item) {
       return item.checked;
     })[0].value;
 
