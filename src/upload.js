@@ -145,9 +145,8 @@
    */
   var filterImage = filterForm.querySelector('.filter-image-preview');
 
-  //Переменная для хранения отмеченного фильтра
-  var lastChecked = browserCookies.get('checkedFilter') || 'none';
-  document.querySelector('input[value="' + lastChecked + '"]').checked = true;
+  //Переменная для хранения значения value отмеченного фильтра
+  var selectedFilter = browserCookies.get('checkedFilter') || 'none';
 
   /**
    * @type {HTMLElement}
@@ -245,6 +244,11 @@
   resizeForm.onsubmit = function(evt) {
     evt.preventDefault();
 
+    //При сабмите формы последнему выбранному фильтру добавляется атрибут checked
+    //к загруженному изображению добавляется класс с именем выбранного фильтра
+    document.querySelector('input[value="' + selectedFilter + '"]').checked = true;
+    filterImage.classList.add('filter-' + selectedFilter);
+
     if (resizeFormIsValid()) {
       filterImage.src = currentResizer.exportImage().src;
 
@@ -299,7 +303,7 @@
       };
     }
 
-    var selectedFilter = [].filter.call(filterForm['upload-filter'], function(item) {
+    selectedFilter = [].filter.call(filterForm['upload-filter'], function(item) {
       return item.checked;
     })[0].value;
 
