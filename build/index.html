@@ -88,7 +88,14 @@
   </a>
 </template>
 
-	<script src="js/main.js"></script>
+  <script>
+    var pictures = [];
+    function __picturesLoadCallback(data) {
+      pictures = data;
+    }
+  </script>
+  <script src="//up.htmlacademy.ru/assets/js_intensive/jsonp/pictures.js"></script>
+  <script src="js/main.js"></script>
 
 </body>
 </html>
