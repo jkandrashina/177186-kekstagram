@@ -66,10 +66,10 @@
 
   //Функция renderPictures очищает блок изображений и вызывает
   //функцию отрисовки изображений
-  var renderPictures = function(pictures) {
+  var renderPictures = function(picturesFiltered) {
     picturesContainer.innerHTML = '';
 
-    pictures.forEach(function(picture) {
+    picturesFiltered.forEach(function(picture) {
       getPictureElement(picture, picturesContainer);
     });
   };
